@@ -1,0 +1,67 @@
+<doctype! html>
+<html>
+
+<head>
+
+  <title>PROBLEM SOLVING ROOM</title>
+
+  <!-- JS -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <!-- CSS -->
+  <link href='/css/styles.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i|Playfair+Display:400i|Poppins" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div id="header"><h2>eureka</h2></div>
+
+<div id="main">
+  <div id="question">
+    <h2>QUESTION</h2>
+    <h1>Given x = 20, what is the final value of the expression 2x<sup>2</sup> - 15?</h1>
+  </div>
+
+  <div id="tags">
+  <div class="tag">ALGEBRA</div>
+  <div class="tag"><span>ORDER OF OPERATIONS</span></div>
+  <div class="tag"><span>ARITHMETIC</span></div>
+  </div>
+  <hr />
+  <div id="solution-space"></div>
+  <div id="chat-space-wrapper">
+  <div id="participants-space" align="center"><!--
+    <div class="participant"><img src="img/me.JPG"></div>
+    <div class="participant"><img src="img/me.JPG"></div>-->
+  </div>
+  <div id="chat-space">
+    <img src="img/me.JPG">
+    <form name="chatform" action="">
+      <input type="text" name="chat" id="chat">
+      <label for="chat">
+        <textarea cols="40" rows="5"></textarea>
+      </label>
+      <div id="submitters">
+        <input type="submit" id="submit" value="SUBMIT">
+      </div>
+    </form>
+  </div></div>
+</div>
+
+
+<div id="insights-space"></div>
+
+
+<script>
+  var socket = io();
+  socket.on('newUser', function(name){
+    console.log(name+' has joined the room.')
+    $("#participants-space").append("<div class='participant' id='"+name+"'><img src='img/me.JPG'></div>")
+  });
+</script>
+
+</body>
+
+</html>

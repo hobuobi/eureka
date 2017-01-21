@@ -1,0 +1,148 @@
+body {
+  background-color: pink;
+}
+
+form{
+  display: inline-block;
+  vertical-align: top;
+}
+h1,h2,h3,h4,h5,h6 {
+  font-family: Poppins, sans-serif;
+  font-weight: 400;
+  color: #00217D;
+  margin: 5px 0px;
+}
+
+/* SECTIONS */
+
+#header {
+  display: inline-block;
+  padding: 10px 20px 10px 20px;
+  width: 100%;
+  height: 50px;
+
+  border-bottom: solid 5px #00217D;
+
+  z-index: 10000;
+}
+
+#main {
+  vertical-align: top;
+  position: relative;
+  display: inline-block;
+  width: 70%;
+  height: 100%;
+}
+
+#question {
+  display: inline-block;
+  text-align: left;
+  width: 100%;
+  padding: 0px 20px;
+}
+
+#tags {
+  display: inline-block;
+  width: 100%;
+  padding: 0px 20px;
+}
+
+#solution-space {
+  display: inline-block;
+  width: 100%;
+  padding: 0px 20px;
+}
+#chat-space-wrapper {
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+}
+#chat-space {
+  width: 100%;
+  margin: 0px;
+  height: 100px;
+  border-top: solid 1px gray;
+  vertical-align: bottom;
+}
+#chat-space > img {
+  display: inline-block;
+  height: 80%;
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 20px #CCC;
+}
+#chat-space input[type="text"] {
+  position: absolute;
+  top: -5000%;
+
+  visibility: collapse;
+}
+#chat-space textarea{
+  display: inline-block;
+  height: 100%;
+  width: 90%;
+  margin: 0px;
+  padding: 15px;
+  outline: none;
+  border:none;
+  border-left: solid 1px #CCC;
+  border-right: solid 1px #CCC;
+
+  font-family: Open Sans, sans-serif;
+  font-weight: 300;
+  font-size: 1.25em;
+  vertical-align: top;
+}
+#submitters {
+  display: inline-block;
+}
+#insights-space {
+  vertical-align: top;
+  position: relative;
+  display: inline-block;
+  width: 29%;
+  height: 100%;
+  background-color: #F9F9F9;
+  box-shadow: 0px 0px 30px #CCC;
+}
+#participants-space {
+  display: inline-block;
+  position: relative;
+  height: 50px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.participant{
+  height: 50px;
+  width: 50px;
+  margin: 0px 20px;
+  border-radius: 25px;
+  box-shadow: 0px 0px 20px #CCC;
+}
+
+#participants-space div img {
+  height: 100%;
+  border-radius: 25px;
+}
+/* CLASSES */
+
+.tag {
+  position: relative;
+  display: inline-block;
+  height: 25px;
+  border-radius: 25px;
+  padding: 0px 15px;
+  margin: 5px 10px 5px 0px;
+
+  background-color: #00217D;
+
+  font-family: Poppins, sans-serif;
+  font-weight: 400;
+  font-size: 1em;
+  color: white;
+  line-height: -50%;
+
+  vertical-align: middle;
+  line-height: 50px;
+}
