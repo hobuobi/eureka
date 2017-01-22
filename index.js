@@ -34,7 +34,11 @@ io.on('connection', function(socket){
   socket.userID = tempID;
   userDict.push(tempEntry);
   console.log(socket.userID);
-  io.emit('newUser', socket.userID);
+  console.log(userDict);
+  io.emit('newUser', userDict, tempID);
+  socket.on('chat', function(msg){
+    io.emit('chat-received',msg,socket.userID);
+  });
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });

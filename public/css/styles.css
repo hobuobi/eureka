@@ -75,7 +75,7 @@ h1,h2,h3,h4,h5,h6 {
 #chat-space textarea{
   display: inline-block;
   height: 100%;
-  width: 90%;
+  width: 70%;
   margin: 0px;
   padding: 15px;
   outline: none;
@@ -97,14 +97,14 @@ h1,h2,h3,h4,h5,h6 {
   height: 50px;
   margin-bottom: 15px;
 }
-#participants-space div {
+#participants-space > div {
   position: relative;
   display: inline-block;
-  margin: 0px 20px;
+  margin: 0px 70px;
   height: 50px;
   width: 50px;
   border-radius: 25px;
-  box-shadow: 0px 0px 10px #CCC;
+  box-shadow: 0px 0px 15px #AAA;
 }
 #participants-space div img {
   position: relative;
@@ -112,15 +112,42 @@ h1,h2,h3,h4,h5,h6 {
   border-radius: 25px;
 }
 #insights-space {
+  float: right;
+  margin-right: -20px;
   vertical-align: top;
   position: relative;
   display: inline-block;
-  width: 29%;
+  padding: 20px;
+  width: 25%;
   height: 100%;
   background-color: #F9F9F9;
   box-shadow: 0px 0px 30px #CCC;
 }
+#insights-space h1,h2,h3,h4,h5,h6{
+  color: #00D16A
+}
+#close {
+  float: right;
+  font-family: Poppins, sans-serif;
+  font-weight: 400;
+  font-size: 0.7em;
 
+  color: red;
+
+  text-decoration: underline;
+  cursor: pointer;
+}
+#upvote {
+  float: left;
+  font-family: Poppins, sans-serif;
+  font-weight: 400;
+  font-size: 0.7em;
+
+  color: green;
+
+  text-decoration: underline;
+  cursor: pointer;
+}
 /* CLASSES */
 
 .tag {
@@ -141,4 +168,57 @@ h1,h2,h3,h4,h5,h6 {
 
   vertical-align: middle;
   line-height: 50px;
+}
+.chat-bubble {
+  position: absolute;
+  bottom: 130%;
+  left: 0%;
+  transform: translateX(-42%);
+  width: 200px;
+  padding: 15px;
+
+  font-family: Open Sans, sans-serif;
+  font-weight: 300;
+  font-size: 0.9em;
+  color: gray;
+
+  max-height: 150px;
+  overflow-y: auto;
+
+  border: solid 3px #00217D;
+  border-radius: 20px;
+}
+
+.insight-container {
+  margin: 30px 0px;
+  display: table;
+  width: 100%;
+
+}
+
+.insight-picture{
+  display: table-cell;
+  padding: 0px 5px;
+  width: 60px;
+}
+.insight-picture img {
+  width: 100%;
+  border-radius: 27px;
+  box-shadow: 0px 0px 15px #AAA;
+}
+.insight {
+  display: table-cell;
+  vertical-align: top;
+  width: auto;
+  padding-left: 15px;
+}
+.insight p{
+  font-family: Playfair Display, serif;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5em;
+  color: gray;
+}
+.insight h3 {
+  margin: 0;
 }

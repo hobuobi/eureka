@@ -9,7 +9,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <!-- CSS -->
-  <link href='/css/styles.css' rel='stylesheet'>
+  <link href='css/styles.css' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i|Playfair+Display:400i|Poppins" rel="stylesheet">
 
 </head>
@@ -32,34 +32,81 @@
   <hr />
   <div id="solution-space"></div>
   <div id="chat-space-wrapper">
-  <div id="participants-space" align="center"><!--
+  <div id="participants-space" align="center">
+    <!--
+    <div class="participant" id="hobuobi">
+      <img src="img/me.JPG">
+      <div class="chat-bubble">
+        <span id="upvote">UPVOTE</span><span id="close">CLOSE</span>
+        <br>
+        <span class="comment">Yeah, I think that's a great idea! We should discuss with Mr. Walker.</span>
+      </div>
+    </div>
     <div class="participant"><img src="img/me.JPG"></div>
-    <div class="participant"><img src="img/me.JPG"></div>-->
+  -->
   </div>
   <div id="chat-space">
     <img src="img/me.JPG">
-    <form name="chatform" action="">
-      <input type="text" name="chat" id="chat">
-      <label for="chat">
-        <textarea cols="40" rows="5"></textarea>
-      </label>
+        <textarea cols="40" rows="5" id="chatbox"></textarea>
       <div id="submitters">
-        <input type="submit" id="submit" value="SUBMIT">
+        <input type="button" id="chat" value="SUBMIT">
       </div>
-    </form>
   </div></div>
 </div>
 
 
-<div id="insights-space"></div>
+<div id="insights-space">
+  <h1>INSIGHTS</h1>
+  <hr />
+  <!-- <div class="insight-container">
+    <div class="insight-picture"><img src="img/me.JPG"></div>
+    <div class="insight">
+      <h3>HUMPHREY</h3>
+      <p>Yeah, I think that's a great idea! We should discuss with Mr. Walker.</p>
+    </div>
+  </div>-->
+</div>
 
 
 <script>
+
   var socket = io();
-  socket.on('newUser', function(name){
-    console.log(name+' has joined the room.')
-    $("#participants-space").append("<div class='participant' id='"+name+"'><img src='img/me.JPG'></div>")
+  socket.on('newUser', function(userDict,tempID){
+    console.log(tempID+' has joined the room.')
+    for(x in userDict){
+      console.log(userDict[x]);
+      console.log(userDict[x].id);
+      participants = $(".participant");
+      ids = participants.map(function(i){ return participants[i].id; })
+      if(!(ids.toArray().includes(userDict[x].id))){
+        $("#participants-space").append("<div class='participant' id='"+userDict[x].id+"'><img src='img/me.JPG'></div>")
+      }
+    }
   });
+  $("#chat").click(function(){
+    socket.emit('chat', $('#chatbox').val());
+    $('#chatbox').val("");
+  })
+  socket.on('chat-received', function(msg,userID){
+    $(".participant#"+userID).append(
+     "<div class='chat-bubble'><span id='upvote'>UPVOTE</span><span id='close'>CLOSE</span><br><span class='comment'>"+msg+"</span></div>"
+    )
+    applyChatFunctions();
+  })
+
+  function applyChatFunctions(){
+    $("#close").click(function(){ console.log('clickd'); $(this).parent().remove(); });
+    $("#upvote").click(function(){
+      msg = $(this).siblings('.comment').text();
+      id = $(this).parent().parent().attr("id");
+      console.log(id);
+      console.log(msg);
+      $("#insights-space").append(
+        "<div class='insight-container'><div class='insight-picture'><img src='img/me.JPG'></div><div class='insight'><h3>HUMPHREY</h3><p>"+msg+"</p></div></div>"
+      )
+    })
+  }
+
 </script>
 
 </body>
