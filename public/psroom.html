@@ -9,28 +9,51 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <!-- CSS -->
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>
   <link href='css/styles.css' rel='stylesheet'>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i|Playfair+Display:400i|Poppins" rel="stylesheet">
 
 </head>
 
 <body>
+<div id="question-add-wrapper">
+  <div id="question-add">
+    <textarea cols="40" rows="5" placeholder="What's the question you want to ask?"></textarea>
+    <button id="question-submit">SUBMIT TO REPO</button>
+    <button id="cancel">CANCEL</button>
+  </div>
+</div>
 
-<div id="header"><h2>eureka</h2></div>
+<div id="header"><h2 style="color:white; padding-left: 20px;">eureka v.1.0.0</h2></div>
 
-<div id="main">
-  <div id="question">
-    <h2>QUESTION</h2>
-    <h1>Given x = 20, what is the final value of the expression 2x<sup>2</sup> - 15?</h1>
+<div id="main" class="col-md-9">
+  <div id="prompt">
+    <h2 style="margin-top: 20px">HERE'S A THOUGHT...</h2>
+    <div id="question-box">
+      <div id="question"><h1>How might you compare the positions on law and order of the Chinese scholars Han Feizi and Mozi?</h1></div>
+      <div id="question-options">
+        <button id="new"> + NEW QUERY + </button>
+        <button id="add"> ? ADD TO REPO ? </button>
+      </div>
+    </div>
   </div>
 
   <div id="tags">
-  <div class="tag">ALGEBRA</div>
-  <div class="tag"><span>ORDER OF OPERATIONS</span></div>
-  <div class="tag"><span>ARITHMETIC</span></div>
+  <div class="tag"><img src="img/go_white.png">CHINESE PHILOSOPHY</div>
+  <div class="tag"><img src="img/go_white.png"><span>HAN FEIZI</span></div>
+  <div class="tag"><img src="img/go_white.png"><span>MOZI</span></div>
   </div>
   <hr />
-  <div id="solution-space"></div>
+  <div id="solution-space">
+    <h2>NOW PROPOSE SOME SOLUTIONS.</h2>
+  <!--
+    <div class="solution">
+      <div class="solution-vote">+</div>
+      <h3>TIM SAYS...</h3>
+      <span><i>The answer is probably 785 -- you need to follow the order of operations and do the squared term first, then multiply, and finally subtract.</i></span>
+    </div>
+  -->
+  </div>
   <div id="chat-space-wrapper">
   <div id="participants-space" align="center">
     <!--
@@ -47,15 +70,16 @@
   </div>
   <div id="chat-space">
     <img src="img/me.JPG">
-        <textarea cols="40" rows="5" id="chatbox"></textarea>
+        <textarea cols="40" rows="5" id="chatbox" placeholder="Type here to chat, give insights, and propose solutions to the given problem! [Enter to CHAT, Ctrl+Enter to SOLVE]"></textarea>
       <div id="submitters">
-        <input type="button" id="chat" value="SUBMIT">
+        <button id="chat">CHAT</button>
+        <button id="solve">SOLUTION</button>
       </div>
   </div></div>
 </div>
 
 
-<div id="insights-space">
+<div id="insights-space" class="col-md-3">
   <h1>INSIGHTS</h1>
   <hr />
   <!-- <div class="insight-container">
@@ -69,9 +93,29 @@
 
 
 <script>
+  linkify();
+  $('#add').click(function(){
+    $("#question-add-wrapper").fadeIn(400);
+  })
+  $('#cancel').click(function(){
+    $("#question-add-wrapper").fadeOut(400);
+  })
+  $('#chatbox').keypress(function (e) {
+  if (e.which == 13) {
+    $('#chat').click();
+    return false;    
+  }
+});
+$('#chatbox').keydown(function (e) {
 
+  if (e.ctrlKey && e.keyCode == 13) {
+    $("#solve").click();
+  }
+});
   var socket = io();
-  socket.on('newUser', function(userDict,tempID){
+  var localDict = [];
+  socket.on('newUser', function(userDict,tempID,path){
+    localDict = userDict;
     console.log(tempID+' has joined the room.')
     for(x in userDict){
       console.log(userDict[x]);
@@ -79,13 +123,26 @@
       participants = $(".participant");
       ids = participants.map(function(i){ return participants[i].id; })
       if(!(ids.toArray().includes(userDict[x].id))){
-        $("#participants-space").append("<div class='participant' id='"+userDict[x].id+"'><img src='img/me.JPG'></div>")
+        $("#participants-space").append("<div class='participant' id='"+userDict[x].id+"'><img src='"+userDict[x].picture+"'></div>")
       }
     }
   });
   $("#chat").click(function(){
     socket.emit('chat', $('#chatbox').val());
+    console.log($('#chatbox').val())
     $('#chatbox').val("");
+  })
+  $("#solve").click(function(){
+    socket.emit('solve', $('#chatbox').val());
+    $('#chatbox').val("");
+  })
+  $(".solution-vote").click(function(){
+    console.log($(this).siblings('span:first').attr("id"));
+    identifier = $(this).siblings('span:first').attr("id");
+    socket.emit('vote-cast', identifier)
+  })
+  socket.on('vote-count-change',function(ident,votes){
+    $("#"+ident).siblings('div:first').text(votes);
   })
   socket.on('chat-received', function(msg,userID){
     $(".participant#"+userID).append(
@@ -93,20 +150,61 @@
     )
     applyChatFunctions();
   })
-
+  socket.on('solution-received', function(msg,questionID,pName){
+    $("#solution-space").append(
+     "<div class='solution'><div class='solution-vote'>+</div><h3>"+pName.toUpperCase()+" SAYS...</h3><span id="+questionID+"><i>"+msg+"</i></span></div>"
+    )
+    applyVoteFunctions();
+  })
+  socket.on('new-question', function(question,phrases){
+    $('#question').html("<h1>"+question+"</h1>");
+    $('.tag').remove();
+    $('.insight-container').remove();
+    $('.solution').remove();
+    phrases.forEach(function(element){
+      $('#tags').append("<div class='tag'><img src='img/go_white.png'>"+element.toUpperCase()+"</div>")
+    })
+    linkify();
+  })
+  $("#new").click(function(){
+    socket.emit('new-question');
+  })
+  $("#question-submit").click(function(){
+    socket.emit('question-submit', $(this).siblings('textarea:first').val())
+    $(this).siblings('textarea:first').val("")
+    $("#question-add-wrapper").fadeOut(400);
+  })
   function applyChatFunctions(){
-    $("#close").click(function(){ console.log('clickd'); $(this).parent().remove(); });
+    $("#close").click(function(){ $(this).parent().css('opacity', 0).slideDown('slow').animate({ opacity: 1 },{ queue: false, duration: 'slow' }).remove() });
     $("#upvote").click(function(){
       msg = $(this).siblings('.comment').text();
       id = $(this).parent().parent().attr("id");
       console.log(id);
       console.log(msg);
       $("#insights-space").append(
-        "<div class='insight-container'><div class='insight-picture'><img src='img/me.JPG'></div><div class='insight'><h3>HUMPHREY</h3><p>"+msg+"</p></div></div>"
+        "<div class='insight-container'><div class='insight-picture'><img src='"+findByIdent(localDict,id).picture+"'></div><div class='insight'><h3>"+findByIdent(localDict,id).name+"</h3><p>"+msg+"</p></div></div>"
       )
     })
   }
-
+  function applyVoteFunctions(){
+    $(".solution-vote").click(function(){
+      console.log($(this).siblings('span:first').attr("id"));
+      identifier = $(this).siblings('span:first').attr("id");
+      socket.emit('vote-cast', identifier)
+    })
+  }
+  function linkify(){
+    $(".tag").wrap(function(){
+      return "<a href='http://www.wikipedia.org/wiki/"+$(this).text().toLowerCase().replace(" ","_")+"' target=_blank></a>";
+    })
+  }
+  function findByIdent(arr,str){
+  for(x in arr){
+    if(arr[x].id == str)
+      return arr[x]
+  }
+  return null
+}
 </script>
 
 </body>
